@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.2.xsd ">
+
+
+    <context:property-placeholder location="classpath:df.properties"/>
+
+
+    <!--服务发现对象，用于获取ZK上面的服务-->
+    <bean id="serviceDiscovery" class="com.weitongming.rpc.registry.ServiceDiscovery">
+        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    </bean>
+    <!--RPC客户端对象-->
+    <bean id="rpcClient" class="com.weitongming.rpc.client.RpcClient">
+        <constructor-arg index="0" name="serviceDiscovery" ref="serviceDiscovery"/>
+        <constructor-arg index="1">
+            <list>
+                <value>com.weitongming.myweb.service.LoginService</value>
+                <value>com.weitongming.myweb.service.MessageService</value>
+                <value>com.weitongming.myweb.service.PostService</value>
+                <value>com.weitongming.myweb.service.ReplyService</value>
+                <value>com.weitongming.myweb.service.TopicService</value>
+                <value>com.weitongming.myweb.service.UserService</value>
+                <value>com.weitongming.myweb.service.BlogService</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    <!--配置以工厂方式获取代理对象-->
+    <bean id="loginService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.LoginService"></constructor-arg>
+    </bean>
+    <bean id="messageService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.MessageService"></constructor-arg>
+    </bean>
+    <bean id="postService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.PostService"></constructor-arg>
+    </bean>
+    <bean id="replyService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.ReplyService"></constructor-arg>
+    </bean>
+    <bean id="topicService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.TopicService"></constructor-arg>
+    </bean>
+    <bean id="userService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.UserService"></constructor-arg>
+    </bean>
+    <bean id="blogService" factory-bean="rpcClient" factory-method="getClient">
+        <constructor-arg index="0" value="com.weitongming.myweb.service.BlogService"></constructor-arg>
+    </bean>
+    <context:component-scan base-package="com.weitongming.myweb"/>
+</beans>
